@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -10,6 +12,11 @@ type Configuration struct {
 	Server     string
 	PrivateKey string
 }
+
+const (
+	APIPATH = "/api/v3/projects"
+	PRIVKEY = "private_token="
+)
 
 func NewConfig(filename string) (Configuration, error) {
 	file, err := os.Open(filename)
@@ -35,4 +42,8 @@ func main() {
 	}
 
 	fmt.Println(config)
+
+	r, err := http.Get(fmt.Sprintf("%s%s?%s%s", config.Server, APIPATH, PRIVKEY, config.PrivateKey))
+	body, err := ioutil.ReadAll(r.Body)
+	fmt.Println(body)
 }
